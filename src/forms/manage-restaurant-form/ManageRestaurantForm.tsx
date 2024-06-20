@@ -9,6 +9,8 @@ import MenuSection from "@/forms/manage-restaurant-form/MenuSection.tsx";
 import ImageSection from "@/forms/manage-restaurant-form/ImageSection.tsx";
 import LoadingButton from "@/components/LoadingButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
+import { Restaurant } from "@/types.ts";
+import { useEffect } from "react";
 
 const formSchema = z.object({
     restaurantName : z.string({ required_error : "Restaurant Name is required" }),
@@ -29,7 +31,11 @@ const formSchema = z.object({
             price : z.coerce.number().min(1, "Price is required"),
         })
     ),
-    imageFile : z.instanceof(File, { message : "Image is required" })
+    imageUrl : z.string().optional(),
+    imageFile : z.instanceof(File, { message : "Image is required" }).optional()
+}).refine((data) => data.imageUrl || data.imageFile, {
+    message : "Either imageUrl or imageFile must be provided",
+    path : ["imageFile"]
 })
 
 type RestaurantFormData = z.infer<typeof formSchema>
@@ -37,9 +43,10 @@ type RestaurantFormData = z.infer<typeof formSchema>
 type Props = {
     onSave : (restaurantFormData : FormData) => void;
     isLoading : boolean;
+    restaurant? : Restaurant;
 }
 
-export default function ManageRestaurantForm({ onSave, isLoading } : Props) {
+export default function ManageRestaurantForm({ onSave, isLoading, restaurant } : Props) {
     const form = useForm<RestaurantFormData>(
         {
             resolver : zodResolver(formSchema),
@@ -49,6 +56,12 @@ export default function ManageRestaurantForm({ onSave, isLoading } : Props) {
             }
         }
     )
+
+    useEffect(() => {
+        if (!restaurant) return;
+        form.reset(restaurant);
+    }, [form, restaurant]);
+
     const onSubmit = (formDataJson : RestaurantFormData) => {
         const {
             restaurantName,
@@ -71,13 +84,12 @@ export default function ManageRestaurantForm({ onSave, isLoading } : Props) {
             formData.append(`menuItems[${index}][name]`, menuItem.name);
             formData.append(`menuItems[${index}][price]`, menuItem.price.toString());
         });
-        formData.append("imageFile", imageFile);
-
+        if (imageFile) formData.append("imageFile", imageFile);
         onSave(formData);
     }
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 bg-gray-50 p-10 rounded-lg">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 bg-gray-50 p-6 md:p-10 rounded-lg">
                 <DetailsSection/>
                 <Separator/>
                 <CuisinesSection/>
