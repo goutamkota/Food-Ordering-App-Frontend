@@ -7,7 +7,7 @@ export default function ManageRestaurantPage() {
     const { updateRestaurant, isLoading : isUpdateLoading } = useUpdateRestaurant();
     const isEditing = !!restaurant;
     if (isGetLoading) return <span>Loading...</span>;
-    if (isUpdateLoading) return <span>Loading...</span>;
+    // if (isUpdateLoading) return <span>Loading...</span>;
     return (
         <ManageRestaurantForm
             restaurant={restaurant}

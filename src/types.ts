@@ -1,28 +1,37 @@
 export type User = {
-    _id: string;
-    email: string;
-    name: string;
-    address: string;
-    city: string;
-    country: string;
+    _id : string;
+    email : string;
+    name : string;
+    address : string;
+    city : string;
+    country : string;
 }
 
 export type Restaurant = {
-    _id: string;
-    user: string;
-    restaurantName: string;
-    city: string;
-    country: string;
-    deliveryPrice: number;
-    estimatedDeliveryTime: number;
-    cuisines: string[];
-    menuItems: MenuItems[];
-    imageUrl: string;
-    lastUpdate: string;
+    _id : string;
+    user : string;
+    restaurantName : string;
+    city : string;
+    country : string;
+    deliveryPrice : number;
+    estimatedDeliveryTime : number;
+    cuisines : string[];
+    menuItems : MenuItems[];
+    imageUrl : string;
+    lastUpdate : string;
 }
 
 export type MenuItems = {
-    _id: string;
-    name: string;
-    price: number;
+    _id : string;
+    name : string;
+    price : number;
+}
+
+export type RestaurantSearchResponse = {
+    data : Restaurant[];
+    pagination : {
+        total : number;
+        page : number;
+        pages : number;
+    };
 }
