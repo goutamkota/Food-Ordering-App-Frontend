@@ -16,12 +16,12 @@ export type Restaurant = {
     deliveryPrice : number;
     estimatedDeliveryTime : number;
     cuisines : string[];
-    menuItems : MenuItems[];
+    menuItems : MenuItem[];
     imageUrl : string;
     lastUpdate : string;
 }
 
-export type MenuItems = {
+export type MenuItem = {
     _id : string;
     name : string;
     price : number;

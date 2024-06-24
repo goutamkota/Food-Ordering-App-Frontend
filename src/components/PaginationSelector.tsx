@@ -28,8 +28,8 @@ export default function PaginationSelector({ page, pages, onPageChange } : Props
                     </PaginationItem>
                     )}
                     {
-                        pageNumbers.map((pageNumber) => (
-                            <PaginationItem>
+                        pageNumbers.map((pageNumber, index) => (
+                            <PaginationItem key={index}>
                                 <PaginationLink
                                     href="#"
                                     onClick={() => onPageChange(pageNumber)}

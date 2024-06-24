@@ -31,14 +31,14 @@ export default function SortOptionDropdown({ onChange, sortOption } : Props) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger className="cursor-pointer">
-                <Button variant="outline" className="w-full">
+                <Button type="button" variant="outline" className="w-full">
                     Sort by: {selectedSortLabel}
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
                 {
-                    SORT_OPTIONS.map((option) => (
-                        <DropdownMenuItem className="cursor-pointer" onClick={() => onChange(option.value)}>
+                    SORT_OPTIONS.map((option, index) => (
+                        <DropdownMenuItem key={index} className="cursor-pointer" onClick={() => onChange(option.value)}>
                             {option.label}
                         </DropdownMenuItem>
                     ))

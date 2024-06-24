@@ -32,9 +32,9 @@ export default function CuisineFilter({ onChange, selectedCuisines, isExpanded, 
                 {
                     cuisineList
                         .slice(0, isExpanded ? cuisineList.length : 7)
-                        .map((cuisine) => {
+                        .map((cuisine, index) => {
                             const isSelected = selectedCuisines.includes(cuisine);
-                            return <div className="flex">
+                            return <div className="flex" key={index}>
                                 <input type="checkbox" className="hidden" id={`cuisine_${cuisine}`} value={cuisine}
                                        checked={isSelected} onChange={handleCuisinesChange}/>
                                 <Label htmlFor={`cuisine_${cuisine}`}

@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-import useSearchRestaurants from "@/api/RestaurantApi.tsx";
 import SearchResultInfo from "@/components/SearchResultInfo.tsx";
 import SearchResultCard from "@/components/SearchResultCard.tsx";
 import { useState } from "react";
@@ -7,6 +6,7 @@ import SearchBar, { SearchForm } from "@/components/SearchBar.tsx";
 import PaginationSelector from "@/components/PaginationSelector.tsx";
 import CuisineFilter from "@/components/CuisineFilter.tsx";
 import SortOptionDropdown from "@/components/SortOptionDropdown.tsx";
+import { useSearchRestaurants } from "@/api/RestaurantApi.tsx";
 
 export type SearchState = {
     searchQuery : string;
@@ -89,8 +89,8 @@ export default function SearchPage() {
                                         onChange={(value) => setSortOption(value)}></SortOptionDropdown>
                 </div>
                 {
-                    results.data.map((restaurant) => (
-                        <SearchResultCard restaurant={restaurant}/>
+                    results.data.map((restaurant, index) => (
+                        <SearchResultCard key={index} restaurant={restaurant}/>
                     ))
                 }
                 <PaginationSelector
