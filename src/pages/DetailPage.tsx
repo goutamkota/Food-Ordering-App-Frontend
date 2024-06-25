@@ -9,6 +9,7 @@ import OrderSummary from "@/components/OrderSummary.tsx"
 import { MenuItem as MenuItemType } from "@/types.ts";
 import CheckoutButton from "@/components/CheckoutButton.tsx";
 import { UserFormData } from "@/forms/user-profile-form/UserProfileForm.tsx";
+import { useCreateCheckoutSession } from "@/api/OrderApi.tsx";
 
 export type CartItem = {
     _id : string;
@@ -20,6 +21,7 @@ export type CartItem = {
 export default function DetailPage() {
     const { restaurantId } = useParams();
     const { restaurant, isLoading } = useGetRestaurant(restaurantId);
+    const { createCheckoutSession, isLoading : isCheckoutLoading } = useCreateCheckoutSession()
     const [cartItems, setCartItems] = useState<CartItem[]>(() => {
         const storedCartItems = sessionStorage.getItem(`cartItems-${restaurantId}`);
         return storedCartItems ? JSON.parse(storedCartItems) : [];
@@ -52,9 +54,26 @@ export default function DetailPage() {
             return updatedCartItems;
         })
     }
-     const onCheckOut = (userFormData: UserFormData) => {
-         console.log(userFormData)
-     }
+    const onCheckOut = async (userFormData : UserFormData) => {
+        if(!restaurant) return;
+        const checkoutData = {
+            cartItems : cartItems.map((cartItem) => ({
+                menuItemId : cartItem._id,
+                name : cartItem.name,
+                quantity : cartItem.quantity.toString(),
+            })),
+            restaurantId : restaurant?._id,
+            deliveryDetails : {
+                name: userFormData.name,
+                address: userFormData.address,
+                city : userFormData.city,
+                country : userFormData.country,
+                email: userFormData.email as string
+            },
+        };
+        const data = await createCheckoutSession(checkoutData);
+        window.location.href = data.url;
+    }
     if (isLoading || !restaurantId) return "Loading...";
     return (
         <div className="flex flex-col gap-10">
@@ -79,7 +98,7 @@ export default function DetailPage() {
                         {restaurant && <OrderSummary restaurant={restaurant} cartItems={cartItems}
                                                      removeFromCart={removeFromCart}/>}
                         <CardFooter>
-                            <CheckoutButton disabled={cartItems.length === 0} onCheckout={onCheckOut}/>
+                            <CheckoutButton disabled={cartItems.length === 0} isLoading={isCheckoutLoading} onCheckout={onCheckOut}/>
                         </CardFooter>
                     </Card>
                 </div>
