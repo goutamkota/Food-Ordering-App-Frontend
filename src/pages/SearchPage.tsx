@@ -63,8 +63,8 @@ export default function SearchPage() {
             page : 1
         }));
     }
-    if (!results?.data || !city) return <span>No Results Found!</span>;
     if (isLoading) return <span>Loading...</span>;
+    if (!results?.data || !city) return <span>No Results Found!</span>;
     return (
         <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-5">
             <div id="cuisines-list">
