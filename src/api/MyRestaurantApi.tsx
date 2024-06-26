@@ -5,6 +5,11 @@ import { Order, Restaurant } from "@/types.ts";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+type UpdateOrderStatusRequest = {
+    orderId : string;
+    status : string;
+}
+
 export function useGetMyRestaurantOrders() {
     const { getAccessTokenSilently } = useAuth0();
     const getMyRestaurantOrdersRequest = async () : Promise<Order[]> => {
@@ -84,4 +89,40 @@ export function useUpdateMyRestaurant() {
     if (isSuccess) toast.success("Successfully updated Restaurant!");
     if (error) toast.error("Failed to update restaurant!");
     return { updateRestaurant, isLoading };
+}
+
+export function useUpdateMyRestaurantOrderStatus() {
+    const { getAccessTokenSilently } = useAuth0();
+    const updateMyRestaurantOrderStatusRequest = async (updateStatusOrderRequest : UpdateOrderStatusRequest) => {
+        const accessToken = await getAccessTokenSilently();
+        const response = await fetch(
+            `${API_BASE_URL}/api/my/restaurant/order/${updateStatusOrderRequest.orderId}/status`,
+            {
+                method : "PATCH",
+                headers : {
+                    Authorization : `Bearer ${accessToken}`,
+                    "Content-Type" : "application/json",
+                },
+                body : JSON.stringify({ status : updateStatusOrderRequest.status }),
+            }
+        )
+        if (!response.ok) throw new Error("Failed to update order status");
+        return response.json();
+    }
+    const {
+        mutate : updateRestaurantStatus,
+        isLoading,
+        isError,
+        isSuccess,
+        reset
+    } = useMutation(updateMyRestaurantOrderStatusRequest);
+    if (isSuccess) toast.success("Successfully updated Order Status!");
+    if (isError) {
+        toast.error("Unable to update order status!");
+        reset();
+    }
+    return {
+        updateRestaurantStatus,
+        isLoading
+    }
 }

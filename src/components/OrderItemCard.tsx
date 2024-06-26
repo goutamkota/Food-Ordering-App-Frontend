@@ -1,15 +1,29 @@
-import { Order } from "@/types.ts";
+import { Order, OrderStatus } from "@/types.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Label } from "@/components/ui/label.tsx";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select.tsx";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx";
 import { ORDER_STATUS } from "@/config/order-status-config.ts";
+import { useUpdateMyRestaurantOrderStatus } from "@/api/MyRestaurantApi.tsx";
+import { useEffect, useState } from "react";
 
 type Props = {
     order : Order
 }
 
 export default function OrderItemCard({ order } : Props) {
+    const { updateRestaurantStatus, isLoading } = useUpdateMyRestaurantOrderStatus()
+    const [status, setStatus] = useState<OrderStatus>(order.status);
+    useEffect(() => {
+        setStatus(order.status);
+    }, [order.status]);
+    const handleStatusChange = (newStatus : OrderStatus) => {
+        updateRestaurantStatus({
+            orderId : order._id as string,
+            status : newStatus
+        });
+        setStatus(newStatus);
+    }
     const getTime = () => {
         const orderDateTime = new Date(order.createdAt);
         const hours = orderDateTime.getHours();
@@ -60,7 +74,9 @@ export default function OrderItemCard({ order } : Props) {
                 </div>
                 <div className="flex flex-col space-y-1 5">
                     <Label htmlFor="status" className="mb-1">What is the status of this order?</Label>
-                    <Select>
+                    <Select value={status}
+                            disabled={isLoading}
+                            onValueChange={(value) => handleStatusChange(value as OrderStatus)}>
                         <SelectTrigger id="status">
                             <SelectValue placeholder="Status"></SelectValue>
                         </SelectTrigger>

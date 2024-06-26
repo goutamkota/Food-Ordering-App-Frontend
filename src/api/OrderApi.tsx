@@ -22,7 +22,7 @@ type CheckoutSessionRequest = {
 
 export function useGetMyOrders() {
     const { getAccessTokenSilently } = useAuth0();
-    const getMyOrdersRequest = async (): Promise<Order[]> => {
+    const getMyOrdersRequest = async () : Promise<Order[]> => {
         const accessToken = await getAccessTokenSilently();
         const response = await fetch(
             `${API_BASE_URL}/api/order`,
@@ -36,7 +36,11 @@ export function useGetMyOrders() {
         if (!response.ok) throw new Error("Failed to get order");
         return response.json();
     }
-    const { data : orders, isLoading } = useQuery("fetchMyOrders", getMyOrdersRequest);
+    const { data : orders, isLoading } = useQuery(
+        "fetchMyOrders",
+        getMyOrdersRequest,
+        { refetchInterval : 2000 }
+    );
     return {
         orders,
         isLoading,
