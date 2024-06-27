@@ -17,7 +17,7 @@ export default function RestaurantInfo({ restaurant }: Props) {
                     {restaurant.city}, {restaurant.country}
                 </CardDescription>
             </CardHeader>
-            <CardContent className="flex">
+            <CardContent className="flex flex-wrap">
                 {
                     restaurant.cuisines.map((cuisine, index) => (
                         <span className="flex" key={index}>
